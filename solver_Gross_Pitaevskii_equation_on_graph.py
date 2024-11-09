@@ -15,9 +15,6 @@ import matplotlib.colors as mcolors
 
 import pydot
 from networkx.drawing.nx_pydot import graphviz_layout
-
-
-
  
 custom_cmap = mcolors.LinearSegmentedColormap.from_list(
     "gnuplot_style", ["#000000", "#5e4fa2", "#3288bd", "#66c2a5", "#abdda4", "#e6f598", "#fee08b", "#f46d43", "#9e0142"]
@@ -124,23 +121,17 @@ def animate_density_on_graph(G, rho_vs_t, pos=None, node_size=100, title=" ", pa
     ani.save(save_path, writer='pillow', fps=10)
     print(f"Animation saved as {save_path}")
 
- 
-
-
-
-#%%
 
 def get_norm(psi):
     return np.sum(np.abs(psi)**2)
 
+
+
+# r-arry tree
 node_size = 50
-
- 
-
 r = 3
 h = 4
 
- 
 G = nx.balanced_tree(r, h)
 pos = nx.circular_layout(G)
 
@@ -148,27 +139,21 @@ L = G.number_of_nodes()
 print("Number of nodes: {:d}".format(L))
 pos = nx.nx_agraph.graphviz_layout(G, prog="twopi", args="")
 fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-
 nx.draw(G, pos, node_size=node_size, alpha=1, node_color="blue", edge_color="black", with_labels=True)
-
 ax.set_aspect('equal')
- 
 plt.show()
 
-#%%
+# Calculate eigenstates of a non-interacting system
 H_0 = -nx.adjacency_matrix(G).toarray() # Lattice couplings on a graph
 evals, P = LA.eigh(H_0)
 
 psi_GS_0 = P[:,0]
 rho_GS_0 = np.abs(psi_GS_0)**2 
-
  
 energy_0 = np.conj(psi_GS_0) @ (H_0@psi_GS_0)
 energy = energy_0
 
- 
 pos = graphviz_layout(G, prog="twopi")
-
 g = 0
 title_string = r"Ground state density on Graph | interactions g = {:2.2f}".format(g)
 path = "./"
@@ -176,7 +161,7 @@ filename = "fig_ground_state_g.{:2.2f}".format(g) + ".png"
 plot_density_on_graph(G, rho_GS_0, pos=pos, node_size = node_size, title=title_string, path = path, filename = filename)
 
 
-#%%
+# Calculate ground state of a Gross-Pitaevskii equation on a graph with coupling strength g via imaginary time evolution
 # Imaginary time evolution parameters
 
 dt = 0.001
@@ -186,9 +171,6 @@ time_i = 1
 energy_change_velocity = 1
 
 g = 1
-on_off_interactions = 1
-# Imaginary time evolution loop to obtain ground state with interactions
-
 psi = psi_GS_0.copy()
 while energy_change_velocity > epsilon:
     time_i += 1
@@ -208,7 +190,6 @@ while energy_change_velocity > epsilon:
  
 psi_GS = psi.copy()
 rho_GS = np.abs(psi_GS)**2
-
  
 title_string = r"Ground state density on Graph | interactions g = {:2.2f}".format(g)
 path = "./"
@@ -236,8 +217,6 @@ def prepare_RK45_evolution_in_dt(H, psi, dt):
     psi_t_dt = psi_dt + (K1 + 2.0 * K2 + 2.0 * K3 + K4) / 6.0
     return psi_t_dt 
 
-
-
 # Time evolution parameters
 t_max = 5
 Nt = int(np.floor(t_max / dt + 1))
@@ -250,6 +229,8 @@ g = 1
 counter = 0
 rho_vs_t = []
 # psi_ini = psi_GS.copy()
+
+#Initial state: particle located at first node of a graph
 psi_ini = np.zeros((L,), dtype=np.complex128)
 psi_ini[0] = 1
  
@@ -259,20 +240,17 @@ for n in range(Nt + 1):
     V = g*np.abs(psi_t)**2
     H = H_0 + np.diag(V)            
     psi_t = prepare_RK45_evolution_in_dt(H, psi_t, dt)            
-    if(np.mod(n, time_shot) == 0):               
-            
+    if(np.mod(n, time_shot) == 0):                           
         rho = np.abs(psi_t)**2                                    
         rho_vs_t.append((t, np.abs(psi_t)**2))
         print("Progress: {:d}[%]".format(counter))
         counter += 1  
          
-        
- 
+       
 plot_density_on_graph(G, rho_GS_0, pos=pos, node_size = node_size)
 
 path = "./"
 filename = "animation_g.{:2.2f}".format(g) + ".png"
 title_string = "Wave function density | g = {:2.2f}".format(g)
- 
 animate_density_on_graph(G, rho_vs_t, pos=pos, node_size = node_size, title=title_string, path = path , filename = filename)
  

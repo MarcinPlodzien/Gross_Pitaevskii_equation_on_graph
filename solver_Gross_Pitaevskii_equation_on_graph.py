@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov  6 13:48:43 2024
+Created on Wed Nov  6 2024
 @author: Marcin Płodzień
 """
 

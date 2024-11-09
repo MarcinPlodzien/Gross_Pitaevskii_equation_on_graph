@@ -255,15 +255,10 @@ psi_ini[0] = 1
  
 psi_t = psi_ini  # Initial state for time-evolution
 for n in range(Nt + 1):
-    t = n * dt                        
-   
-    ####################################################################
-    ## Runge-Kutta 45 algorithm for solving Schroedinger equation
+    t = n * dt                         
     V = g*np.abs(psi_t)**2
     H = H_0 + np.diag(V)            
-    psi_t = prepare_RK45_evolution_in_dt(H, psi_t, dt)        
-    ####################################################################            
-    
+    psi_t = prepare_RK45_evolution_in_dt(H, psi_t, dt)            
     if(np.mod(n, time_shot) == 0):               
             
         rho = np.abs(psi_t)**2                                    

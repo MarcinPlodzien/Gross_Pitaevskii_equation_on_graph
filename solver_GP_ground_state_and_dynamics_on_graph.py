@@ -194,7 +194,7 @@ G = nx.grid_2d_graph(L, L, periodic = False)
 pos = {(x, y): (y, -x) for x, y in G.nodes()}
 
 
-level = 3
+level = 4
 G, pos = carpet_graph(level)
  
                   
@@ -361,7 +361,7 @@ N_shots = 100
 time_shot = int(Nt/N_shots)
 
 g_f = g_i
-# g_f = 0.
+g_f = 0.
 # Time evolution loop
 rho_vs_t = []
 psi_ini = psi_GS.copy() # to check if GP ground state does not evolve in time
@@ -395,7 +395,7 @@ fig, ax = plt.subplots(1, 3, figsize = (20, 10))
 # Draw the graph with color-coded nodes and black edges with width 2
 nx.draw(
     G, pos, node_size=node_size, 
-    node_color=rho_ini, cmap=custom_cmap, 
+    node_color=rho_GS, cmap=custom_cmap, 
     edge_color="black", width=2, with_labels=False, ax = ax[0])
 
 # # Add color bar fixed from 0 to 1
